@@ -1,1 +1,90 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[6]:
+
+
+# Import necessary libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+# Load the data from CSV file
+data = pd.read_csv('sensor_data.csv')  
+
+# Display the first few rows to check data
+print(data.head())
+
+
+# In[7]:
+
+
+# Define the independent (X) and dependent (y) variables
+X = data[['Temperature']].values  
+y = data['Humidity'].values      
+
+# Create a Linear Regression model and train it
+model = LinearRegression()
+model.fit(X, y)
+
+
+# In[3]:
+
+
+# Find min and max temperature values and create 100 equally spaced points
+min_temp = data['Temperature'].min()
+max_temp = data['Temperature'].max()
+
+test_temperatures = np.linspace(min_temp, max_temp, 100).reshape(-1, 1)
+
+# Predict humidity for these test temperature values
+predicted_humidity = model.predict(test_temperatures)
+
+
+# In[4]:
+
+
+# Plot the original data and the trend line
+plt.scatter(X, y, color='blue', label='Original Data')
+plt.plot(test_temperatures, predicted_humidity, color='red', label='Trend Line')
+plt.xlabel('Temperature')
+plt.ylabel('Humidity')
+plt.title('Temperature vs. Humidity')
+plt.legend()
+plt.show()
+
+
+# In[5]:
+
+
+# Filter out high and low temperatures
+filtered_data = data[(data['Temperature'] < 35) & (data['Temperature'] > 10)]
+
+# Redefine X and y with filtered data
+X_filtered = filtered_data[['Temperature']].values
+y_filtered = filtered_data['Humidity'].values
+
+# Train new model with filtered data
+model_filtered = LinearRegression()
+model_filtered.fit(X_filtered, y_filtered)
+
+# Predict humidity with the filtered model
+predicted_humidity_filtered = model_filtered.predict(test_temperatures)
+
+# Plot the new trend line with filtered data
+plt.scatter(X_filtered, y_filtered, color='blue', label='Filtered Original Data')
+plt.plot(test_temperatures, predicted_humidity_filtered, color='green', label='Filtered Trend Line')
+plt.xlabel('Temperature')
+plt.ylabel('Humidity')
+plt.title('Temperature vs. Humidity (Filtered)')
+plt.legend()
+plt.show()
+
+
+# In[ ]:
+
+
+
+
 
